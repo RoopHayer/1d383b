@@ -30,6 +30,7 @@ const useStyles = makeStyles(() => ({
 const SenderBubble = (props) => {
   const classes = useStyles();
   const { time, text } = props;
+
   return (
     <Box className={classes.root}>
       <Typography className={classes.date}>{time}</Typography>

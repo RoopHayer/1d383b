@@ -1,3 +1,4 @@
+// import readMessages from './utils/readMessages'
 const SET_ACTIVE_CHAT = "SET_ACTIVE_CHAT";
 
 export const setActiveChat = (username) => {

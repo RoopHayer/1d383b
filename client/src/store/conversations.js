@@ -101,9 +101,12 @@ const reducer = (state = [], action) => {
         action.payload.newMessage
       );
       case READ_MESSAGES:
-      return readMessages(
+
+      const roop = readMessages(
         state, action.payload
       )
+      
+      return roop;
     default:
       return state;
   }

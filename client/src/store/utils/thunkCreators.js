@@ -83,6 +83,12 @@ const saveMessage = async (body) => {
   return data;
 };
 
+const updateMessage = async (body) => {
+  const { data } = await axios.put("/api/messages", body);
+  return data;
+};
+
+
 const sendMessage = (data, body) => {
   socket.emit("new-message", {
     message: data.message,
@@ -113,6 +119,14 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
   try {
     const { data } = await axios.get(`/api/users/${searchTerm}`);
     dispatch(setSearchedUsers(data));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const updateReadMessage =  (body) => async (dispatch) => {
+  try {
+    const data = await updateMessage(body);
   } catch (error) {
     console.error(error);
   }

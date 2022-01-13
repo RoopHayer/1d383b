@@ -4,6 +4,8 @@ import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { makeStyles } from "@material-ui/core/styles";
 import { setActiveChat } from "../../store/activeConversation";
 import { connect } from "react-redux";
+import { readConversations} from "../../store/conversations";
+import { unReadConversations} from "../../store/unreadCount";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,6 +28,8 @@ const Chat = (props) => {
 
   const handleClick = async (conversation) => {
     await props.setActiveChat(conversation.otherUser.username);
+     props.unReadConversations(conversation);
+     props.readConversations(conversation.id);
   };
 
   return (
@@ -41,10 +45,17 @@ const Chat = (props) => {
   );
 };
 
+
 const mapDispatchToProps = (dispatch) => {
   return {
     setActiveChat: (id) => {
       dispatch(setActiveChat(id));
+    },
+    readConversations:(messages)=>{
+    dispatch(readConversations(messages));
+    },
+    unReadConversations:(messages)=>{
+      dispatch(unReadConversations(messages))
     }
   };
 };

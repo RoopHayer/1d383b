@@ -80,3 +80,47 @@ export const addNewConvoToStore = (state, recipientId, message) => {
     }
   });
 };
+
+
+export const readMessages = (state, payload) => {
+  const copyState = [...state];
+  const index = copyState.findIndex((element=>payload ===element.id))
+  copyState[index]=state[index];
+  copyState[index].messages.forEach((msg)=>{if(!(payload===msg.senderId)){
+    if(!msg.read){
+    msg.read=true;
+    } 
+  }})
+  return copyState;
+
+};
+
+export const unreadMessages = (state, payload) => {
+  const newState = [...state]
+  let newConvo = [...payload.messages];
+  let count = null;
+  newConvo.forEach(msg=>{
+      if(payload.otherUser.id === msg.senderId){
+        console.log('msg',msg)
+        if(!msg.read){
+        console.log('count++',count, msg.read)
+
+      count++;
+        }
+      }   
+    })
+  let body = {
+    id: payload.id,
+    count: count
+  }
+  console.log('body',body)
+    const idx = newState.findIndex((element=>body.id ===element.id))
+    if(idx>-1){
+      newState[idx].count=count;
+  console.log('newState with index',newState)
+      return newState;
+    }else{
+  console.log('newState without',newState)
+      return [...newState, body]
+    } 
+}; 

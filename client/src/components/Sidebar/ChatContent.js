@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect} from "react";
 import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { connect } from "react-redux";
+import { unReadConversations} from "../../store/unreadCount";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,9 +24,24 @@ const useStyles = makeStyles((theme) => ({
 
 const ChatContent = (props) => {
   const classes = useStyles();
-
-  const { conversation } = props;
+  const { conversation, conversations } = props;
   const { latestMessageText, otherUser } = conversation;
+  const {unreadCount} = props;
+
+    const countUnread =()=>{
+    console.log('inside hello')
+    let idx = unreadCount.findIndex((element)=>element.id===conversation.id);
+     if(idx>-1){
+     console.log('-----unreadCount',unreadCount[idx].count);
+     return unreadCount[idx].count;
+     } 
+     return null;
+    }
+  useEffect( ()=>{
+    props.unReadConversations(conversation);
+  },[])
+    //  console.log('-----',count)
+
 
   return (
     <Box className={classes.root}>
@@ -33,11 +50,26 @@ const ChatContent = (props) => {
           {otherUser.username}
         </Typography>
         <Typography className={classes.previewText}>
-          {latestMessageText}
+          {latestMessageText}<span style={{background:'skyBlue', color:'black',fontSize:'bold', margin:'4rem'}}>
+          { countUnread()}</span>
         </Typography>
       </Box>
     </Box>
   );
 };
 
-export default ChatContent;
+const mapStateToProps = (state) => {
+  return {
+    unreadCount: state.unreadCount,
+    conversations:state.conversations
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    unReadConversations:(messages)=>{
+      dispatch(unReadConversations(messages))
+    }
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChatContent);

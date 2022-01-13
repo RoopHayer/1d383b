@@ -42,5 +42,15 @@ router.post("/", async (req, res, next) => {
     next(error);
   }
 });
+router.put("/", async(req,res,next)=>{
+  try{
 
+    const {id}=req.body;
+    const foundMsg = await Message.findByPk(id);
+    const updated = foundMsg.update(req.body);
+    res.status(200).send(updated);
+  }catch(error){
+    next(error);
+  }
+})
 module.exports = router;

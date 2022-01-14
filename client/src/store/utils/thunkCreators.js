@@ -72,10 +72,12 @@ export const logout = (id) => async (dispatch) => {
 export const fetchConversations = () => async (dispatch) => {
   try {
     const { data } = await axios.get("/api/conversations");
-      data.map((convo)=>{
-        return convo.messages.sort((a,b)=>new Date(a.createdAt)- new Date(b.createdAt))
-      })
-    dispatch(gotConversations(data))
+    data.map((convo) => {
+      return convo.messages.sort(
+        (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+      );
+    });
+    dispatch(gotConversations(data));
   } catch (error) {
     console.error(error);
   }
@@ -86,11 +88,10 @@ const saveMessage = async (body) => {
   return data;
 };
 
-const updateMessage = async (body) => {
+export const updateMessage = async (body) => {
   const { data } = await axios.put("/api/messages", body);
   return data;
 };
-
 
 const sendMessage = (data, body) => {
   socket.emit("new-message", {
@@ -102,10 +103,10 @@ const sendMessage = (data, body) => {
 
 // message format to send: {recipientId, text, conversationId}
 // conversationId will be set to null if its a brand new conversation
-export const postMessage =  (body) => async (dispatch) => {
+export const postMessage = (body) => async (dispatch) => {
   try {
     const data = await saveMessage(body);
-    
+
     if (!body.conversationId) {
       dispatch(addConversation(body.recipientId, data.message));
     } else {
@@ -122,14 +123,6 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
   try {
     const { data } = await axios.get(`/api/users/${searchTerm}`);
     dispatch(setSearchedUsers(data));
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-export const updateReadMessage =  (body) => async (dispatch) => {
-  try {
-    const data = await updateMessage(body);
   } catch (error) {
     console.error(error);
   }

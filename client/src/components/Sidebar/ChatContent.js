@@ -24,23 +24,20 @@ const useStyles = makeStyles((theme) => ({
 
 const ChatContent = (props) => {
   const classes = useStyles();
-  const { conversation, conversations } = props;
+  const { conversation, unReadConversations } = props;
   const { latestMessageText, otherUser } = conversation;
   const {unreadCount} = props;
 
     const countUnread =()=>{
-    console.log('inside hello')
     let idx = unreadCount.findIndex((element)=>element.id===conversation.id);
      if(idx>-1){
-     console.log('-----unreadCount',unreadCount[idx].count);
      return unreadCount[idx].count;
      } 
      return null;
     }
   useEffect( ()=>{
-    props.unReadConversations(conversation);
-  },[])
-    //  console.log('-----',count)
+    unReadConversations(conversation);
+  },[unReadConversations])
 
 
   return (
@@ -60,8 +57,7 @@ const ChatContent = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    unreadCount: state.unreadCount,
-    conversations:state.conversations
+    unreadCount: state.unreadCount
   };
 };
 const mapDispatchToProps = (dispatch) => {

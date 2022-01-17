@@ -83,18 +83,22 @@ export const addNewConvoToStore = (state, recipientId, message) => {
 };
 
 export const readMessages = (state, payload) => {
-  const copyState = [...state];
-  const index = copyState.findIndex((element) => payload === element.id);
-  copyState[index] = state[index];
-  copyState[index].messages.forEach((msg) => {
-    if (!(payload === msg.senderId)) {
-      if (!msg.read) {
-        msg.read = true;
-        updateMessage({ id: msg.id });
-      }
+  return state.map((convo) => {
+    console.log("convo", convo);
+    if (convo.id === payload) {
+      const convoCopy = { ...convo };
+      convoCopy.messages = [...convo.messages];
+      convoCopy.messages.forEach((msg) => {
+        if (convoCopy.otherUser.id === msg.senderId) {
+          msg.read = true;
+          updateMessage({ id: msg.id });
+        }
+      });
+      return convoCopy;
+    } else {
+      return convo;
     }
   });
-  return copyState;
 };
 
 export const unreadMessages = (state, payload) => {

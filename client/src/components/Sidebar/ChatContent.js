@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
@@ -25,51 +25,58 @@ const useStyles = makeStyles((theme) => ({
     color: "black",
     letterSpacing: -0.17,
   },
+  countStyle: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    background: "dodgerblue",
+    color: "white",
+    height: "1.8rem",
+    width: "1.8rem",
+    padding: "0.4rem",
+    fontSize: "1.5rem",
+    borderRadius: "50%",
+  },
 }));
 
 const ChatContent = (props) => {
   const classes = useStyles();
   const { conversation, unReadConversations } = props;
   const { latestMessageText, otherUser } = conversation;
-  const { unreadCount } = props;
-  const countUnread = () => {
-    let idx = unreadCount.findIndex(
-      (element) => element.id === conversation.id
-    );
-    if (idx > -1) {
-      if (unreadCount[idx].count) {
-      }
-      return unreadCount[idx].count;
+  const { unreadCount, activeConversation } = props;
+  // const [count, setCount] = useState(false);
+  const count = useMemo(() => {
+    let sum = 0;
+    if (otherUser.username !== activeConversation) {
+      conversation.messages.forEach((element) => {
+        if (element.read !== true && element.senderId === otherUser.id) {
+          sum++;
+        }
+      });
     }
-    return null;
-  };
-  // const count = useMemo(() => countUnread(), []);
-  useEffect(() => {
-    unReadConversations(conversation);
-  }, [unReadConversations]);
+    return sum ? sum : null;
+  }, [
+    conversation.messages,
+    otherUser.id,
+    activeConversation,
+    otherUser.username,
+  ]);
 
   return (
     <Box className={classes.root}>
-      <Box>
+      <Box style={{ width: "100%" }}>
         <Typography className={classes.username}>
           {otherUser.username}
         </Typography>
-        <Typography
-          className={countUnread() ? classes.boldText : classes.previewText}
-        >
-          {latestMessageText}
-          <span
-            style={{
-              background: "skyBlue",
-              color: "black",
-              fontSize: "bold",
-              margin: "4rem",
-              borderRadius: "50%",
-            }}
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <Typography
+            className={count ? classes.boldText : classes.previewText}
           >
-            {countUnread()}
-          </span>
-        </Typography>
+            {latestMessageText}
+          </Typography>
+          <span className={count ? classes.countStyle : null}>{count}</span>
+        </div>
+        <></>
       </Box>
     </Box>
   );
@@ -78,6 +85,7 @@ const ChatContent = (props) => {
 const mapStateToProps = (state) => {
   return {
     unreadCount: state.unreadCount,
+    activeConversation: state.activeConversation,
   };
 };
 const mapDispatchToProps = (dispatch) => {

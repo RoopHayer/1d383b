@@ -6,7 +6,7 @@ import { setActiveChat } from "../../store/activeConversation";
 import { connect } from "react-redux";
 import { readConversations } from "../../store/conversations";
 import { fetchConversations } from "../../store/utils/thunkCreators";
-import { unReadConversations } from "../../store/unreadCount";
+import { readLastMessages } from "../../store/lastReadMessage";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,14 +24,14 @@ const useStyles = makeStyles((theme) => ({
 
 const Chat = (props) => {
   const classes = useStyles();
-  const { conversation, fetchConversations } = props;
+  const { conversation } = props;
   const { otherUser } = conversation;
 
   const handleClick = async (conversation) => {
-    await props.setActiveChat(conversation.otherUser.username);
+    props.setActiveChat(conversation.otherUser.username);
     props.readConversations(conversation.id);
-    await fetchConversations();
-    await props.unReadConversations(conversation);
+    props.fetchConversations();
+    props.readLastMessages(conversation);
   };
 
   return (
@@ -55,8 +55,8 @@ const mapDispatchToProps = (dispatch) => {
     readConversations: (messages) => {
       dispatch(readConversations(messages));
     },
-    unReadConversations: (messages) => {
-      dispatch(unReadConversations(messages));
+    readLastMessages: (messages) => {
+      dispatch(readLastMessages(messages));
     },
     fetchConversations: () => {
       dispatch(fetchConversations());

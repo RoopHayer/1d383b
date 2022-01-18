@@ -39,7 +39,7 @@ const OtherUserBubble = (props) => {
 
   useEffect(() => {
     readConversations(id);
-  }, [id]);
+  }, [id, readConversations]);
 
   return (
     <Box className={classes.root}>

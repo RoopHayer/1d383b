@@ -1,9 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Box } from "@material-ui/core";
 import { Input, Header, Messages } from "./index";
 import { connect } from "react-redux";
-import { readConversations } from "../../store/conversations";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -23,7 +22,7 @@ const useStyles = makeStyles(() => ({
 
 const ActiveChat = (props) => {
   const classes = useStyles();
-  const { user, readConversations } = props;
+  const { user } = props;
   const conversation = props.conversation || {};
 
   return (
@@ -65,12 +64,5 @@ const mapStateToProps = (state) => {
       ),
   };
 };
-const mapDispatchToProps = (dispatch) => {
-  return {
-    readConversations: (messages) => {
-      dispatch(readConversations(messages));
-    },
-  };
-};
 
-export default connect(mapStateToProps, mapDispatchToProps)(ActiveChat);
+export default connect(mapStateToProps, null)(ActiveChat);

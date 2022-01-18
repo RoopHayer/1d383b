@@ -84,7 +84,6 @@ export const addNewConvoToStore = (state, recipientId, message) => {
 
 export const readMessages = (state, payload) => {
   return state.map((convo) => {
-    console.log("convo", convo);
     if (convo.id === payload) {
       const convoCopy = { ...convo };
       convoCopy.messages = [...convo.messages];
@@ -101,24 +100,24 @@ export const readMessages = (state, payload) => {
   });
 };
 
-export const unreadMessages = (state, payload) => {
+export const addLastReadMessageToStore = (state, payload) => {
   const newState = [...state];
   let newConvo = [...payload.messages];
-  let count = null;
+  let message = null;
   newConvo.forEach((msg) => {
-    if (payload.otherUser.id === msg.senderId) {
-      if (!msg.read) {
-        count++;
+    if (payload.otherUser.id !== msg.senderId) {
+      if (msg.read) {
+        message = { ...msg };
       }
     }
   });
   let body = {
     id: payload.id,
-    count: count,
+    message: message,
   };
   const idx = newState.findIndex((element) => body.id === element.id);
   if (idx > -1) {
-    newState[idx].count = count;
+    newState[idx].message = { ...message };
     return newState;
   } else {
     return [...newState, body];

@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
-import { unReadConversations } from "../../store/unreadCount";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,22 +28,20 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    background: "dodgerblue",
+    background: "#3f92ff",
     color: "white",
-    height: "1.8rem",
-    width: "1.8rem",
-    padding: "0.4rem",
-    fontSize: "1.5rem",
-    borderRadius: "50%",
+    height: "1.5rem",
+    width: "1.5rem",
+    fontSize: ".9rem",
+    borderRadius: "100%",
   },
 }));
 
 const ChatContent = (props) => {
   const classes = useStyles();
-  const { conversation, unReadConversations } = props;
+  const { conversation, activeConversation } = props;
   const { latestMessageText, otherUser } = conversation;
-  const { unreadCount, activeConversation } = props;
-  // const [count, setCount] = useState(false);
+
   const count = useMemo(() => {
     let sum = 0;
     if (otherUser.username !== activeConversation) {
@@ -84,16 +81,8 @@ const ChatContent = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    unreadCount: state.unreadCount,
     activeConversation: state.activeConversation,
   };
 };
-const mapDispatchToProps = (dispatch) => {
-  return {
-    unReadConversations: (messages) => {
-      dispatch(unReadConversations(messages));
-    },
-  };
-};
 
-export default connect(mapStateToProps, mapDispatchToProps)(ChatContent);
+export default connect(mapStateToProps, null)(ChatContent);

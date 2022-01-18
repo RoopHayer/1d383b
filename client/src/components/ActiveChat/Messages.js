@@ -2,13 +2,12 @@ import React from "react";
 import { Box } from "@material-ui/core";
 import { SenderBubble, OtherUserBubble } from "../ActiveChat";
 import { connect } from "react-redux";
-import { readConversations } from "../../store/conversations";
 import moment from "moment";
 
 const Messages = (props) => {
-  const { messages, otherUser, userId, latestMessageText, id } = props;
-  console.log("latest", latestMessageText);
+  const { messages, otherUser, userId, id, lastReadMessage } = props;
 
+  let result = lastReadMessage.find((item) => item.id === id);
   return (
     <Box>
       {messages.map((message) => {
@@ -17,12 +16,11 @@ const Messages = (props) => {
         return message.senderId === userId ? (
           <SenderBubble
             key={message.id}
+            msgId={message.id}
             text={message.text}
             time={time}
-            status={message.read}
-            latestMessageText={latestMessageText}
             otherUser={otherUser}
-            lastMessage={messages.length - 1}
+            lastMessage={result}
           />
         ) : (
           <OtherUserBubble
@@ -37,11 +35,11 @@ const Messages = (props) => {
     </Box>
   );
 };
-const mapDispatchToProps = (dispatch) => {
+
+const mapStateToProps = (state) => {
   return {
-    readConversations: (messages) => {
-      dispatch(readConversations(messages));
-    },
+    lastReadMessage: state.lastReadMessage,
   };
 };
-export default connect(null, mapDispatchToProps)(Messages);
+
+export default connect(mapStateToProps, null)(Messages);

@@ -44,14 +44,13 @@ router.post("/", async (req, res, next) => {
 });
 router.put("/", async (req, res, next) => {
   try {
+    if (!req.user) {
+      return res.sendStatus(401);
+    }
     const { id } = req.body;
-    const body = {
-      id,
-      read: true,
-    };
     const foundMsg = await Message.findByPk(id);
-    const updated = await foundMsg.update(body);
-    res.status(200).send(updated);
+    await foundMsg.update({ read: true });
+    res.sendStatus(200);
   } catch (error) {
     next(error);
   }

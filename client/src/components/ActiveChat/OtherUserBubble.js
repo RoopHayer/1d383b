@@ -1,8 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Box, Typography, Avatar } from "@material-ui/core";
-import { readConversations } from "../../store/conversations";
-import { connect } from "react-redux";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -35,11 +33,7 @@ const useStyles = makeStyles(() => ({
 
 const OtherUserBubble = (props) => {
   const classes = useStyles();
-  const { text, time, otherUser, readConversations, id } = props;
-
-  useEffect(() => {
-    readConversations(id);
-  }, [id, readConversations]);
+  const { text, time, otherUser } = props;
 
   return (
     <Box className={classes.root}>
@@ -60,11 +54,4 @@ const OtherUserBubble = (props) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    readConversations: (messages) => {
-      dispatch(readConversations(messages));
-    },
-  };
-};
-export default connect(null, mapDispatchToProps)(OtherUserBubble);
+export default OtherUserBubble;

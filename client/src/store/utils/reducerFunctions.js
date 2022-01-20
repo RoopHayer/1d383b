@@ -1,4 +1,3 @@
-import { updateMessage } from "./thunkCreators";
 export const addMessageToStore = (state, payload) => {
   const { message, sender } = payload;
   // if sender isn't null, that means the message needs to be put in a brand new convo
@@ -82,16 +81,13 @@ export const addNewConvoToStore = (state, recipientId, message) => {
   });
 };
 
-export const readMessages = (state, payload) => {
+export const addReadMessages = (state, payload) => {
   return state.map((convo) => {
-    if (convo.id === payload) {
+    if (convo.id === payload.conversationId) {
       const convoCopy = { ...convo };
       convoCopy.messages = [...convo.messages];
       convoCopy.messages.forEach((msg) => {
-        if (convoCopy.otherUser.id === msg.senderId) {
-          msg.read = true;
-          updateMessage({ id: msg.id });
-        }
+        if (payload.id === msg.id) return (msg.read = true);
       });
       return convoCopy;
     } else {
@@ -100,26 +96,18 @@ export const readMessages = (state, payload) => {
   });
 };
 
-export const addLastReadMessageToStore = (state, payload) => {
-  const newState = [...state];
-  let newConvo = [...payload.messages];
-  let message = null;
-  newConvo.forEach((msg) => {
-    if (payload.otherUser.id !== msg.senderId) {
-      if (msg.read) {
-        message = { ...msg };
-      }
+export const saveLastReadMessageInStore = (
+  state,
+  conversationId,
+  messageId
+) => {
+  return state.map((convo) => {
+    if (convo.id === conversationId) {
+      const convoCopy = { ...convo };
+      convoCopy.latestSentRead = messageId;
+      return convoCopy;
+    } else {
+      return convo;
     }
   });
-  let body = {
-    id: payload.id,
-    message: message,
-  };
-  const idx = newState.findIndex((element) => body.id === element.id);
-  if (idx > -1) {
-    newState[idx].message = { ...message };
-    return newState;
-  } else {
-    return [...newState, body];
-  }
 };

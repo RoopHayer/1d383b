@@ -1,13 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box } from "@material-ui/core";
 import { SenderBubble, OtherUserBubble } from "../ActiveChat";
 import { connect } from "react-redux";
+import { readMessages } from "../../store/utils/thunkCreators";
 import moment from "moment";
 
 const Messages = (props) => {
-  const { messages, otherUser, userId, id, lastReadMessage } = props;
+  const {
+    messages,
+    otherUser,
+    userId,
+    id,
+    latest,
+    conversation,
+    readMessages,
+  } = props;
 
-  let result = lastReadMessage.find((item) => item.id === id);
+  useEffect(() => {
+    if (messages[messages.length - 1].read !== true)
+      return readMessages(conversation);
+  }, [messages, conversation, readMessages]);
   return (
     <Box>
       {messages.map((message) => {
@@ -20,7 +32,7 @@ const Messages = (props) => {
             text={message.text}
             time={time}
             otherUser={otherUser}
-            lastMessage={result}
+            latest={latest}
           />
         ) : (
           <OtherUserBubble
@@ -36,10 +48,12 @@ const Messages = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    lastReadMessage: state.lastReadMessage,
+    readMessages: (conversation) => {
+      dispatch(readMessages(conversation));
+    },
   };
 };
 
-export default connect(mapStateToProps, null)(Messages);
+export default connect(null, mapDispatchToProps)(Messages);

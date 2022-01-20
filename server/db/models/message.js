@@ -12,9 +12,9 @@ const Message = db.define("message", {
   },
   read: {
     type: Sequelize.BOOLEAN,
-    default: false,
+    defaultValue: false,
     allowNull: true,
-  }
+  },
 });
 
 module.exports = Message;

@@ -50,7 +50,7 @@ router.put("/", async (req, res, next) => {
     const { id } = req.body;
     const foundMsg = await Message.findByPk(id);
     await foundMsg.update({ read: true });
-    res.sendStatus(200);
+    res.sendStatus(204);
   } catch (error) {
     next(error);
   }

@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Box, Typography } from "@material-ui/core";
+import { Box, Typography, Chip } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 
@@ -23,17 +23,6 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: "bold",
     color: "black",
     letterSpacing: -0.17,
-  },
-  countStyle: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    background: "#3f92ff",
-    color: "white",
-    height: "1.5rem",
-    width: "1.5rem",
-    fontSize: ".9rem",
-    borderRadius: "100%",
   },
 }));
 
@@ -71,7 +60,7 @@ const ChatContent = (props) => {
           >
             {latestMessageText}
           </Typography>
-          <span className={count ? classes.countStyle : null}>{count}</span>
+          {count && <Chip label={count} color="primary" size="small" />}
         </div>
         <></>
       </Box>

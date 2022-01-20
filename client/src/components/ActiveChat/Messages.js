@@ -17,7 +17,7 @@ const Messages = (props) => {
   } = props;
 
   useEffect(() => {
-    if (messages[messages.length - 1].read !== true)
+    if (messages[messages.length - 1]?.read !== true)
       return readMessages(conversation);
   }, [messages, conversation, readMessages]);
   return (

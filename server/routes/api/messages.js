@@ -47,9 +47,10 @@ router.put("/", async (req, res, next) => {
     if (!req.user) {
       return res.sendStatus(401);
     }
-    const { id } = req.body;
-    const foundMsg = await Message.findByPk(id);
-    await foundMsg.update({ read: true });
+    await Message.update(
+      { read: true },
+      { where: { id: req.body.unreadMsgIds } }
+    );
     res.sendStatus(204);
   } catch (error) {
     next(error);

@@ -130,9 +130,10 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
 
 export const readMessages = (conversation) => async (dispatch) => {
   try {
+    let unreadMsgIds = [];
     conversation.messages.forEach((msg) => {
       if (conversation.otherUser.id === msg.senderId && msg.read !== true) {
-        updateMessage({ id: msg.id });
+        unreadMsgIds.push(msg.id);
         dispatch(readConversations(msg));
         socket.emit("read-messages", {
           conversationId: conversation.id,
@@ -140,6 +141,7 @@ export const readMessages = (conversation) => async (dispatch) => {
         });
       }
     });
+    updateMessage({ unreadMsgIds, conversation });
   } catch (error) {
     console.error(error);
   }

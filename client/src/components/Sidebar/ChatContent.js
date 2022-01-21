@@ -24,6 +24,10 @@ const useStyles = makeStyles((theme) => ({
     color: "black",
     letterSpacing: -0.17,
   },
+  text: {
+    display: "flex",
+    justifyContent: "space-between",
+  },
 }));
 
 const ChatContent = (props) => {
@@ -54,14 +58,21 @@ const ChatContent = (props) => {
         <Typography className={classes.username}>
           {otherUser.username}
         </Typography>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <Box className={classes.text}>
           <Typography
             className={count ? classes.boldText : classes.previewText}
           >
             {latestMessageText}
           </Typography>
-          {count && <Chip label={count} color="primary" size="small" />}
-        </div>
+          {count && (
+            <Chip
+              className={classes.count}
+              label={count}
+              color="primary"
+              size="small"
+            />
+          )}
+        </Box>
         <></>
       </Box>
     </Box>

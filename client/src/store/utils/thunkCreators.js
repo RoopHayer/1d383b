@@ -131,6 +131,7 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
 export const readMessages = (conversation) => async (dispatch) => {
   try {
     let unreadMsgIds = [];
+    let otherUserId = conversation.otherUser.id;
     conversation.messages.forEach((msg) => {
       if (conversation.otherUser.id === msg.senderId && msg.read !== true) {
         unreadMsgIds.push(msg.id);
@@ -141,7 +142,12 @@ export const readMessages = (conversation) => async (dispatch) => {
         });
       }
     });
-    updateMessage({ unreadMsgIds, conversation });
+    unreadMsgIds[0] &&
+      updateMessage({
+        unreadMsgIds,
+        otherUserId,
+        conversationId: conversation.id,
+      });
   } catch (error) {
     console.error(error);
   }

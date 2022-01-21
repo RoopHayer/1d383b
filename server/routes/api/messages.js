@@ -47,11 +47,20 @@ router.put("/", async (req, res, next) => {
     if (!req.user) {
       return res.sendStatus(401);
     }
+    const convo = await Conversation.findOne({
+      where: {
+        user1Id: req.body.otherUserId,
+        user2Id: req.user.id,
+      },
+    });
+    if (convo.id !== req.body.conversationId) {
+      return res.sendStatus(403);
+    }
     await Message.update(
       { read: true },
       { where: { id: req.body.unreadMsgIds } }
     );
-    res.sendStatus(204);
+    return res.sendStatus(204);
   } catch (error) {
     next(error);
   }

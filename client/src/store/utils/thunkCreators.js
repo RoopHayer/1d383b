@@ -5,6 +5,7 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
+  readConversations,
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
 
@@ -72,10 +73,12 @@ export const logout = (id) => async (dispatch) => {
 export const fetchConversations = () => async (dispatch) => {
   try {
     const { data } = await axios.get("/api/conversations");
-      data.map((convo)=>{
-        return convo.messages.sort((a,b)=>new Date(a.createdAt)- new Date(b.createdAt))
-      })
-    dispatch(gotConversations(data))
+    data.map((convo) => {
+      return convo.messages.sort(
+        (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+      );
+    });
+    dispatch(gotConversations(data));
   } catch (error) {
     console.error(error);
   }
@@ -84,6 +87,10 @@ export const fetchConversations = () => async (dispatch) => {
 const saveMessage = async (body) => {
   const { data } = await axios.post("/api/messages", body);
   return data;
+};
+
+export const updateMessage = async (body) => {
+  await axios.put("/api/messages", body);
 };
 
 const sendMessage = (data, body) => {
@@ -96,10 +103,10 @@ const sendMessage = (data, body) => {
 
 // message format to send: {recipientId, text, conversationId}
 // conversationId will be set to null if its a brand new conversation
-export const postMessage =  (body) => async (dispatch) => {
+export const postMessage = (body) => async (dispatch) => {
   try {
     const data = await saveMessage(body);
-    
+
     if (!body.conversationId) {
       dispatch(addConversation(body.recipientId, data.message));
     } else {
@@ -116,6 +123,31 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
   try {
     const { data } = await axios.get(`/api/users/${searchTerm}`);
     dispatch(setSearchedUsers(data));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const readMessages = (conversation) => async (dispatch) => {
+  try {
+    let unreadMsgIds = [];
+    let otherUserId = conversation.otherUser.id;
+    conversation.messages.forEach((msg) => {
+      if (conversation.otherUser.id === msg.senderId && msg.read !== true) {
+        unreadMsgIds.push(msg.id);
+        dispatch(readConversations(msg));
+        socket.emit("read-messages", {
+          conversationId: conversation.id,
+          messageId: msg.id,
+        });
+      }
+    });
+    unreadMsgIds[0] &&
+      updateMessage({
+        unreadMsgIds,
+        otherUserId,
+        conversationId: conversation.id,
+      });
   } catch (error) {
     console.error(error);
   }

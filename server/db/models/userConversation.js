@@ -21,3 +21,5 @@ const UserConversation = db.define("userConversation", {
     allowNull: false,
   },
 });
+
+module.exports = UserConversation;
